@@ -1,21 +1,33 @@
 import requests
-from secrets import nutritionix_key, nutritionix_id, headers
 import datetime
+import os
 
 now = datetime.datetime.now()
 today = now.today()
 
-head = {
+nutritionix_id = os.environ['nutritionix_id']
+
+nutritionix_key = os.environ['nutritionix_key']
+
+authorization = os.environ['Authorization']
+
+nutritionix_headers = {
     'x-app-id': nutritionix_id,
     'x-app-key': nutritionix_key
 }
+
+sheety_headers = {
+    'Authorization': authorization
+}
+
 nutritionix_endpoint = 'https://trackapi.nutritionix.com/v2/natural/exercise'
 sheety_endpoint = 'https://api.sheety.co/80d472412da841101008ec637a12804d/myWorkoutsPython/workouts'
 
 body = {
     'query': input('Tell me which exercises you did: ')
 }
-response = requests.post(nutritionix_endpoint, json=body, headers=head)
+response = requests.post(nutritionix_endpoint, json=body, headers=nutritionix_headers)
+print(response.status_code)
 
 data = response.json()['exercises']
 
@@ -32,5 +44,5 @@ for elem in data:
         }
     }
 
-    response = requests.post(sheety_endpoint, json=sheety_post, headers=headers)
-print(response.json())
+    response = requests.post(sheety_endpoint, json=sheety_post, headers=sheety_headers)
+print(response.status_code)
